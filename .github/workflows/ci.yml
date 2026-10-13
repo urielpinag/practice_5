@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # Job 1: compila el proyecto, corre las pruebas con cobertura y publica los artefactos.
+  build-and-test:
+    name: Build y pruebas con cobertura
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Linter
+        run: npm run lint
+
+      - name: Pruebas unitarias con cobertura
+        run: npm run test:coverage
+
+      # El build de producción usa el entorno `production` de Wrangler, que
+      # genera el Worker `pato-pomodoro-production` (se elige en tiempo de build).
+      - name: Compilar (entorno production)
+        run: npm run build:prod
+
+      - name: Publicar el reporte de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+      # Incluye el build y el redirect de Wrangler (.wrangler/deploy), que es
+      # lo que le dice a `wrangler deploy` qué configuración publicada usar.
+      - name: Publicar el build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            dist
+            .wrangler/deploy
+          retention-days: 14
+
+  # Job 2: publica el artefacto compilado en el proyecto de producción de Cloudflare.
+  deploy-prod:
+    name: Publicar en Cloudflare (producción)
+    needs: build-and-test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Descargar el artefacto del build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Publicar en Cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
