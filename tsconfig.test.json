@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
+    // Resolución tipo bundler para poder importar "./index" sin extensión.
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    // Igual que el Worker: sin tipos del DOM, solo los de Workers.
+    "types": ["./worker-configuration.d.ts"],
+  },
+  "include": ["worker/**/*.test.ts"]
+}
