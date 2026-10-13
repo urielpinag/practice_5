@@ -43,9 +43,17 @@ const CLAVE_AJUSTES = "pato-pomodoro:ajustes";
 const CLAVE_STATS = "pato-pomodoro:stats";
 
 function limitar(valor: unknown, min: number, max: number, porDefecto: number): number {
-  const n = typeof valor === "number" ? valor : Number(valor);
-  if (!Number.isFinite(n)) return porDefecto;
-  return Math.min(max, Math.max(min, Math.round(n)));
+  // Solo aceptamos números o cadenas numéricas con contenido: cualquier otra
+  // cosa (null, "", "abc") cae al valor por defecto.
+  const numero =
+    typeof valor === "number"
+      ? valor
+      : typeof valor === "string" && valor.trim() !== ""
+        ? Number(valor)
+        : Number.NaN;
+
+  if (!Number.isFinite(numero)) return porDefecto;
+  return Math.min(max, Math.max(min, Math.round(numero)));
 }
 
 export function cargarAjustes(): Ajustes {

@@ -35,8 +35,10 @@ function Campo({ id, etiqueta, valor, min, max, sufijo, onCambiar }: CampoProps)
   };
 
   return (
-    <label className="campo" htmlFor={id}>
-      <span className="campo__etiqueta">{etiqueta}</span>
+    <div className="campo">
+      <label className="campo__etiqueta" htmlFor={id}>
+        {etiqueta}
+      </label>
       <span className="campo__control">
         <input
           id={id}
@@ -48,12 +50,12 @@ function Campo({ id, etiqueta, valor, min, max, sufijo, onCambiar }: CampoProps)
           onChange={(evento) => setTexto(evento.target.value)}
           onBlur={confirmar}
           onKeyDown={(evento) => {
-            if (evento.key === "Enter") evento.currentTarget.blur();
+            if (evento.key === "Enter") confirmar();
           }}
         />
         <span className="campo__sufijo">{sufijo}</span>
       </span>
-    </label>
+    </div>
   );
 }
 
