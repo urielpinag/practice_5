@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:prod": "CLOUDFLARE_ENV=production npm run build",
     "lint": "oxlint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy",
+    "deploy:prod": "npm run build:prod && wrangler deploy",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
@@ -17,13 +22,18 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.63.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^24.19.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "^5.0.4",
+    "jsdom": "^30.1.2",
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
+    "vitest": "^5.0.4",
     "wrangler": "^4.149.0"
   }
 }
