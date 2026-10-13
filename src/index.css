@@ -1,0 +1,42 @@
+:root {
+  color-scheme: light;
+  font-family: ui-rounded, "SF Pro Rounded", "Nunito", "Quicksand", system-ui,
+    -apple-system, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --tinta: #4a3f2a;
+  --tinta-suave: #8a7c66;
+  --naranja: #ff9f1c;
+  --sombra: 0 18px 40px -18px rgba(120, 96, 30, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--tinta);
+  background: linear-gradient(160deg, #fff3c4, #ffd9a8 55%, #ffc9d6);
+}
+
+button {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
